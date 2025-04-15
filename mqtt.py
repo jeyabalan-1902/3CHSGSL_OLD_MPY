@@ -52,22 +52,22 @@ def mqtt_callback(topic, msg):
         try:
             data = ujson.loads(msg)
 
-            if "action" in data and data["action"] == "doubleGate":
+            if "action" in data and data["action"] == "osc":
                 print("received payload: {}".format(data))
-                R2.value(1)
+                R1.value(1)
                 R3.value(1)
                 time.sleep_ms(600)
-                R2.value(0)
+                R1.value(0)
                 R3.value(0)
-                status_msg = ujson.dumps({"action": "doubleGate"})
+                status_msg = ujson.dumps({"action": "osc"})
                 client.publish(TOPIC_PUB, status_msg)
             
-            if "action" in data and data["action"] == "singleGate":
+            if "action" in data and data["action"] == "ped":
                 print("received payload: {}".format(data))
-                R1.value(1)  
+                R2.value(1)  
                 time.sleep_ms(600)
-                R1.value(0)  
-                status_msg = ujson.dumps({"action": "singleGate"})
+                R2.value(0)  
+                status_msg = ujson.dumps({"action": "ped"})
                 client.publish(TOPIC_PUB, status_msg)
 
         except ValueError as e:
@@ -127,7 +127,7 @@ def connect_mqtt():
     global client
     global mqtt_connect
     try:
-        client = MQTTClient(client_id=product_key, server=BROKER_ADDRESS, port=PORT, user=USERNAME, password=MQTT_PASSWORD, keepalive=MQTT_KEEPALIVE)
+        client = MQTTClient(client_id=product_id, server=BROKER_ADDRESS, port=PORT, user=USERNAME, password=MQTT_PASSWORD, keepalive=MQTT_KEEPALIVE)
         client.set_callback(mqtt_callback)
         client.connect()
         S_Led.value(1)
